@@ -1,5 +1,7 @@
 package com.company;
 
+//master
+
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.LinkedList;
@@ -9,9 +11,7 @@ public class Game extends Canvas implements Runnable{
 	private static final long serialVersionUID = 1L;
 	public static final int HEIGHT = 480, WIDTH = HEIGHT*4/3; 
 	private static final String title = "Template";
-	
-	
-	
+
 	Thread thread;
 	private static boolean running = false;
 	
