@@ -1,21 +1,21 @@
 package com.company;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
 public class GamePanel extends Canvas implements Runnable {
     private static final long serialVersionUID = 1L;
-    public static final int SCREEN_HEIGHT = 480;
-    public static final int SCREEN_WIDTH = SCREEN_HEIGHT * 4 / 3;
+
     public static final double UPDATES_PER_SECOND = 60.0;
 
     Thread thread;
     private static boolean gameActive = false;
 
-    Ball ball = new Ball(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    Ball ball = new Ball(GameFrame.SCREEN_WIDTH / 2, GameFrame.SCREEN_HEIGHT / 2);
 
     public GamePanel() {
-        new GameFrame(SCREEN_WIDTH, SCREEN_HEIGHT, this);
+        this.setFocusable(true);
     }
 
     public synchronized void start() {
@@ -70,6 +70,7 @@ public class GamePanel extends Canvas implements Runnable {
         }
         Graphics graphics = bufferStrategy.getDrawGraphics();
         background(Color.black, graphics);
+        ball.update();
         ball.display(graphics);
 
         graphics.dispose();
