@@ -20,6 +20,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void update() {
+        ball.update();
     }
 
     private void background(Color color, Graphics graphics) {
@@ -29,13 +30,13 @@ public class Game extends Canvas implements Runnable {
 
     private void draw() {
         BufferStrategy bufferStrategy = this.getBufferStrategy();
-        if (bufferStrategy == null) {
-            this.createBufferStrategy(3);
-            return;
-        }
         Graphics graphics = bufferStrategy.getDrawGraphics();
+        Graphics2D graphics2D = (Graphics2D) graphics;
+        graphics2D.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
         background(Color.black, graphics);
-        ball.update();
         ball.display(graphics);
 
         graphics.dispose();
@@ -43,6 +44,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     public void run() {
+        this.createBufferStrategy(3);
         long lastTime = System.nanoTime();
         double nanoSecondsPerFrame = 1000000000 / UPDATES_PER_SECOND;
         double delta = 0;
@@ -71,5 +73,4 @@ public class Game extends Canvas implements Runnable {
             e.printStackTrace();
         }
     }
-
 }

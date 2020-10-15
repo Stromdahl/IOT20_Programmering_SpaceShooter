@@ -8,7 +8,7 @@ public class Ball extends GameObject {
 
     Ball(double x, double y) {
         super(x, y);
-        addForce(new Vector2D(.01,.01));
+        addForce(new Vector2D(1,1));
     }
 
     @Override
