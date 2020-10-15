@@ -1,123 +1,90 @@
 package com.company;
 
-//master
+import com.company.input.Mouse;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.util.LinkedList;
 
-public class Game extends Canvas implements Runnable{
+public class Game extends Canvas implements Runnable {
+    public static final double UPDATES_PER_SECOND = 60.0;
+    static long frameRate = 0;
+    Thread thread;
+    private static boolean gameActive = false;
 
-	private static final long serialVersionUID = 1L;
-	public static final int HEIGHT = 480, WIDTH = HEIGHT*4/3; 
-	private static final String title = "Template";
+    Ball ball = new Ball(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d);
 
-	Thread thread;
-	private static boolean running = false;
-	
-	private Handler handler; 
-	 
-	public Game(){
-		handler = new Handler();
-		this.addKeyListener(new KeyInput(handler));
-		
-		new Window(WIDTH,HEIGHT,title,this);
-		System.out.println(HEIGHT + ", " + WIDTH);
-		handler.addObject(new Player(WIDTH/2, HEIGHT/2-32/2, 32, 32, ID.Player));
-		handler.addObject(new Ball(194, 100, 10, 10, ID.Ball));
-	}
+    public Game() {
+        Mouse mouse = new Mouse();
+        addMouseListener(mouse);
+        addMouseMotionListener(mouse);
+    }
 
-	public synchronized void start(){
-		thread = new Thread(this);
-		thread.start();
-		running = true;
-	}
-	
-	public synchronized void stop(){
-		try{
-			thread.join();
-			running = false;
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-	}
+    public synchronized void start() {
+        thread = new Thread(this);
+        thread.start();
+        gameActive = true;
+    }
 
-	public void run() {
-		long lastTime = System.nanoTime();
-		double amountOfTicks = 60.0;
-		double ns = 1000000000 / amountOfTicks;
-		double delta = 0; 
-		long timer = System.currentTimeMillis();
-		int frames = 0;
-		while(running){
-			long now = System.nanoTime();
-			delta += (now - lastTime) / ns;
-			lastTime = now;
-			while(delta >= 1){
-				tick();
-				delta--;
-			}
-			if(running){
-				render();
-			}
-			frames++;
-			
-			if(System.currentTimeMillis() - timer > 1000){
-				timer += 1000;
-				//System.out.println("Fps:" + frames);
-				frames = 0;
-			}
-		}
-		stop();
-	}
-	
-	public static int clamp(int var, int min, int max){
-		if(var >= max){
-			return var = max;
-		}
-		else if(var <= min){
-			return var = min;
-		}
-		else {
-			return var;
-		}
-		
-	}
-	
-	public static int firstInList(LinkedList<Integer> keys, LinkedList<Integer> pressedKeys){
-		for(int i = 0; i < pressedKeys.size(); i++){
-			if(keys.contains(pressedKeys.get(i))){
-				return pressedKeys.get(i);
-			}
-		}
-		return 0;
-	}
-	
-	private void tick() {
-		handler.tick();
-	}
+    private void update() {
+        ball.update();
 
-	private void render() {
-		BufferStrategy bs = this.getBufferStrategy();
-		if(bs == null){
-			this.createBufferStrategy(3);
-			return;
-		}
-		Graphics g = bs.getDrawGraphics();
-		
-		g.setColor(Color.black);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		
-		handler.render(g);
-		
-		
-		
-		g.dispose();
-		bs.show();
-	}
+        System.out.println(Mouse.getX() + " " + Mouse.getY());
 
-	public static void main(String[] args) {
-		new Game();
-	}
+        if (Mouse.getButton() == 1) {
+            Vector2D force = Vector2D.fromAngle(ball.position.getAngleBetween(Mouse.getY(), Mouse.getX()));
+            force.setMagnitude(0.5);
+            ball.addForce(force);
+        }
+    }
 
+
+    private void draw() {
+        BufferStrategy bufferStrategy = this.getBufferStrategy();
+        Graphics graphics = bufferStrategy.getDrawGraphics();
+        Graphics2D graphics2D = (Graphics2D) graphics;
+        graphics2D.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+
+        drawBackground(Color.black, graphics);
+        ball.display(graphics);
+
+        graphics.dispose();
+        bufferStrategy.show();
+    }
+
+    private void drawBackground(Color color, Graphics graphics) {
+        graphics.setColor(color);
+        graphics.fillRect(0, 0, getWidth(), getHeight());
+    }
+
+    public void run() {
+        this.createBufferStrategy(3);
+        long lastTime = System.nanoTime();
+        double nanoSecondsPerFrame = 1000000000 / UPDATES_PER_SECOND;
+        double delta = 0;
+        while (gameActive) {
+            long now = System.nanoTime();
+            delta += (now - lastTime) / nanoSecondsPerFrame;
+            lastTime = now;
+            while (delta >= 1) {
+                update();
+                delta--;
+            }
+            if (gameActive) {
+                draw();
+            }
+            frameRate = 1000000000 / (System.nanoTime() - now);
+        }
+        stop();
+    }
+
+    public synchronized void stop() {
+        try {
+            thread.join();
+            gameActive = false;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

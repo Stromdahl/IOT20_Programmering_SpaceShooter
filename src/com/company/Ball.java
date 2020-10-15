@@ -2,34 +2,48 @@ package com.company;
 
 import java.awt.*;
 
-public class Ball extends gameObject {
+public class Ball extends GameObject {
 
-	public Ball(int x, int y,int sizeX, int sizeY, ID id) {
-		super(x, y,sizeX, sizeY, id);
-		
-		velX = 5;
-		velY = 5;
-		x = Game.WIDTH;
-		
-	}
+    private int size = 20;
+    private double drag = 0.995d;
 
-	
-	public void tick() {
-		x += velX;
-		y += velY;
-		
-		if(x <= 0 || x >= Game.WIDTH - 15) velX *= -1;
-		if(y <= 0 || y >= Game.HEIGHT - 38) velY *= -1;
-		
-	}
+    Ball(double x, double y) {
+        super(x, y);
+        addForce(new Vector2D(1,1));
+    }
 
-	
-	public void render(Graphics g) {
-	
-		g.setColor(Color.red);
-		
-		g.fillRect(x, y, sizeY, sizeX);
-		
-	}
+    @Override
+    public void update() {
+        this.velocity.add(this.acceleration);
+        this.position.add(this.velocity);
+        this.acceleration.mult(0);
+        this.edgeCollision();
+        this.addForce(GameObject.gravity);
+        this.velocity.mult(this.drag);
+    }
 
+    @Override
+    public void display(Graphics graphics) {
+        graphics.setColor(Color.red);
+        graphics.fillOval((int) this.position.x, (int) this.position.y, size, size);
+    }
+
+    public void edgeCollision(){
+        if(this.position.y + size > GameWindow.SCREEN_HEIGHT){
+            this.position.y = 2 * (GameWindow.SCREEN_HEIGHT - size) - this.position.y;
+            this.velocity.y = -this.velocity.y;
+        }
+        if(this.position.y < 0){
+            this.position.y = -this.position.y;
+            this.velocity.y = -this.velocity.y;
+        }
+        if(this.position.x + size> GameWindow.SCREEN_WIDTH){
+            this.position.x = 2 * (GameWindow.SCREEN_WIDTH - size) - (this.position.x);
+            this.velocity.x = -this.velocity.x;
+        }
+        if(this.position.x < 0){
+            this.position.x = -this.position.x;
+            this.velocity.x = -this.velocity.x;
+        }
+    }
 }
