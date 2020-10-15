@@ -31,9 +31,13 @@ public class Game extends Canvas implements Runnable {
 
     private void update() {
         ball.update();
-        System.out.println(Mouse.getButton());
-    }
 
+        if(Mouse.getButton() == 1){
+            Vector2D force = Vector2D.fromAngle(ball.position.getAngleBetween(Mouse.getY(), Mouse.getX()));
+            force.setMagnitude(1);
+            ball.addForce(force);
+        }
+    }
     private void background(Color color, Graphics graphics) {
         graphics.setColor(color);
         graphics.fillRect(0, 0, getWidth(), getHeight());
