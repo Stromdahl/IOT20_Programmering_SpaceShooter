@@ -4,8 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameWindow extends JFrame {
-    public static final int SCREEN_WIDTH = 600;
-    public static final int SCREEN_HEIGHT = 400;
+    public static final int SCREEN_WIDTH = 1000;
+    public static final int SCREEN_HEIGHT = 800;
 
     private static final long serialVersionUID = 1L;
 

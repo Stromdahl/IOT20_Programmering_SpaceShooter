@@ -6,12 +6,8 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 
 public class Game extends Canvas implements Runnable {
-    static long frameRate = 0;
-
-    private static final long serialVersionUID = 1L;
-
     public static final double UPDATES_PER_SECOND = 60.0;
-
+    static long frameRate = 0;
     Thread thread;
     private static boolean gameActive = false;
 
@@ -32,16 +28,15 @@ public class Game extends Canvas implements Runnable {
     private void update() {
         ball.update();
 
-        if(Mouse.getButton() == 1){
+        System.out.println(Mouse.getX() + " " + Mouse.getY());
+
+        if (Mouse.getButton() == 1) {
             Vector2D force = Vector2D.fromAngle(ball.position.getAngleBetween(Mouse.getY(), Mouse.getX()));
-            force.setMagnitude(1);
+            force.setMagnitude(0.5);
             ball.addForce(force);
         }
     }
-    private void background(Color color, Graphics graphics) {
-        graphics.setColor(color);
-        graphics.fillRect(0, 0, getWidth(), getHeight());
-    }
+
 
     private void draw() {
         BufferStrategy bufferStrategy = this.getBufferStrategy();
@@ -51,11 +46,16 @@ public class Game extends Canvas implements Runnable {
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        background(Color.black, graphics);
+        drawBackground(Color.black, graphics);
         ball.display(graphics);
 
         graphics.dispose();
         bufferStrategy.show();
+    }
+
+    private void drawBackground(Color color, Graphics graphics) {
+        graphics.setColor(color);
+        graphics.fillRect(0, 0, getWidth(), getHeight());
     }
 
     public void run() {
