@@ -18,11 +18,11 @@ public class Ball extends GameObject {
 
     public void update() {
         this.velocity.add(this.acceleration);
-        this.position.add(this.velocity);
+        //this.position.add(this.velocity);
         this.acceleration.mult(0);
 
         this.edgeCollision();
-        this.movement();
+        //this.movement();
 
         this.velocity.mult(this.drag);
     }

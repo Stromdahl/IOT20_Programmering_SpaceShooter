@@ -1,11 +1,11 @@
 package com.company;
 
-import com.company.gameObjects.Ball;
-import com.company.input.Keyboard;
-import com.company.input.Mouse;
+import com.company.gameObjects.*;
+import com.company.input.*;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.text.Format;
 
 public class Game extends Canvas implements Runnable {
     public static final double UPDATES_PER_SECOND = 60.0;
@@ -17,6 +17,7 @@ public class Game extends Canvas implements Runnable {
     private static boolean gameActive = false;
 
     Ball ball = new Ball(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d);
+    Player player = new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d);
 
     public Game() {
         keyboard = new Keyboard();
@@ -35,7 +36,8 @@ public class Game extends Canvas implements Runnable {
 
     private void update() {
         ball.update();
-
+        player.update();
+        System.out.println(Keyboard.UP + ", " + Keyboard.LEFT + ", " + Keyboard.DOWN + ", " + Keyboard.RIGHT);
         if (Mouse.getButton() == 1) {
             Vector2D force = Vector2D.fromAngle(ball.position.getAngleBetween(Mouse.getY(), Mouse.getX()));
             force.setMagnitude(0.5);
@@ -53,10 +55,18 @@ public class Game extends Canvas implements Runnable {
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
         drawBackground(Color.black, graphics);
+
         ball.display(graphics);
+        player.display(graphics);
 
         graphics.dispose();
         bufferStrategy.show();
+    }
+
+    private void drawText(String text, int x, int y, int size, Graphics graphics) {
+        graphics.setColor(Color.yellow);
+        graphics.setFont(new Font("Monospaced", Font.PLAIN, 20));
+        graphics.drawString("FPS: " + frameRate, 5, 15);
     }
 
     private void drawBackground(Color color, Graphics graphics) {

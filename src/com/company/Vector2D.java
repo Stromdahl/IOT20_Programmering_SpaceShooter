@@ -41,7 +41,7 @@ public class Vector2D {
         this.y *= scalar;
     }
 
-    public double angle() {
+    public double getAngle() {
         return Math.atan2(this.y, this.x);
     }
 
@@ -54,12 +54,23 @@ public class Vector2D {
     }
 
     public void setMagnitude(double magnitude){
-        double angle = this.angle();
+        double angle = this.getAngle();
         this.x = magnitude * Math.cos(angle);
         this.y = magnitude * Math.sin(angle);
     }
 
     public double getMagnitude(){
         return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+    }
+
+    public void rotate(double angle) {
+        double newX = x * Math.cos(angle) - y * Math.sin(angle);
+        double newY = x * Math.sin(angle)  + y * Math.cos(angle);
+        this.x = newX;
+        this.y = newY;
+    }
+
+    public Vector2D copy() {
+        return new Vector2D(this.x, this.y);
     }
 }

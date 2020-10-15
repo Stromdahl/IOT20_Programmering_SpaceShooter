@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.gameObjects.GameObject;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -13,7 +15,7 @@ public class GameWindow extends JFrame {
         game.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         game.setFocusable(true);
         this.add(game);
-        this.setTitle("Physics");
+        this.setTitle("Physics" + Game.frameRate);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
         this.pack();
