@@ -19,9 +19,8 @@ public class Vector2D {
         this.y += y;
     }
 
-    public void add(Vector2D vector2D) {
-        this.x += vector2D.x;
-        this.y += vector2D.y;
+    public void add(Vector2D vector) {
+        this.add(vector.x, vector.y);
     }
 
     public void subtract(double x, double y) {
@@ -29,9 +28,8 @@ public class Vector2D {
         this.y -= y;
     }
 
-    public void subtract(Vector2D vector2D) {
-        this.x -= vector2D.x;
-        this.y -= vector2D.y;
+    public void subtract(Vector2D vector) {
+        this.subtract(vector.x, vector.y);
     }
 
     public void mult(double scalar) {
@@ -41,5 +39,13 @@ public class Vector2D {
 
     public double angle() {
         return Math.atan2(this.y, this.x);
+    }
+
+    public double getAngleBetween(double x, double y) {
+        return Math.atan2(this.x - x, this.y - y);
+    }
+
+    public double getAngleBetween(Vector2D vector) {
+        return this.getAngleBetween(vector.x, vector.y);
     }
 }
