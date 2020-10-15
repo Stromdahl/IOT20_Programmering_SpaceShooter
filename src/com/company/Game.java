@@ -1,9 +1,13 @@
 package com.company;
 
+import com.company.input.Mouse;
+
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
 public class Game extends Canvas implements Runnable {
+    static long frameRate = 0;
+
     private static final long serialVersionUID = 1L;
 
     public static final double UPDATES_PER_SECOND = 60.0;
@@ -11,7 +15,13 @@ public class Game extends Canvas implements Runnable {
     Thread thread;
     private static boolean gameActive = false;
 
-    Ball ball = new Ball(GameWindow.SCREEN_WIDTH / 2, GameWindow.SCREEN_HEIGHT / 2);
+    Ball ball = new Ball(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d);
+
+    public Game() {
+        Mouse mouse = new Mouse();
+        addMouseListener(mouse);
+        addMouseMotionListener(mouse);
+    }
 
     public synchronized void start() {
         thread = new Thread(this);
@@ -21,6 +31,7 @@ public class Game extends Canvas implements Runnable {
 
     private void update() {
         ball.update();
+        System.out.println(Mouse.getButton());
     }
 
     private void background(Color color, Graphics graphics) {
@@ -59,8 +70,7 @@ public class Game extends Canvas implements Runnable {
             if (gameActive) {
                 draw();
             }
-            long frameRate = 1000000000 / (System.nanoTime() - now);
-            System.out.println(frameRate);
+            frameRate = 1000000000 / (System.nanoTime() - now);
         }
         stop();
     }

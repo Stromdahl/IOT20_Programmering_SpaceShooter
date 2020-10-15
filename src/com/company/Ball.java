@@ -4,7 +4,8 @@ import java.awt.*;
 
 public class Ball extends GameObject {
 
-    int size = 20;
+    private int size = 20;
+    private double drag = 0.995d;
 
     Ball(double x, double y) {
         super(x, y);
@@ -13,10 +14,12 @@ public class Ball extends GameObject {
 
     @Override
     public void update() {
-        velocity.add(acceleration);
-        position.add(velocity);
-        acceleration.mult(0);
+        this.velocity.add(this.acceleration);
+        this.position.add(this.velocity);
+        this.acceleration.mult(0);
         this.edgeCollision();
+        this.addForce(GameObject.gravity);
+        this.velocity.mult(this.drag);
     }
 
     @Override

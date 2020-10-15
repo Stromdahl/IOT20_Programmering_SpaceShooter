@@ -8,6 +8,8 @@ public abstract class GameObject {
     public Vector2D velocity;
     public Vector2D acceleration;
 
+    public final static Vector2D gravity = new Vector2D(0, .1);
+
     GameObject(double x, double y) {
         position = new Vector2D(x, y);
         velocity = new Vector2D();
