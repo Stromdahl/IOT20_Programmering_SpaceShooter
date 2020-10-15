@@ -1,5 +1,7 @@
 package com.company;
 
+import com.company.gameObjects.Ball;
+import com.company.input.Keyboard;
 import com.company.input.Mouse;
 
 import java.awt.*;
@@ -8,13 +10,19 @@ import java.awt.image.BufferStrategy;
 public class Game extends Canvas implements Runnable {
     public static final double UPDATES_PER_SECOND = 60.0;
     static long frameRate = 0;
+
+    Keyboard keyboard;
+    Mouse mouse;
     Thread thread;
     private static boolean gameActive = false;
 
     Ball ball = new Ball(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d);
 
     public Game() {
-        Mouse mouse = new Mouse();
+        keyboard = new Keyboard();
+        mouse = new Mouse();
+
+        addKeyListener(keyboard);
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
     }
@@ -27,8 +35,6 @@ public class Game extends Canvas implements Runnable {
 
     private void update() {
         ball.update();
-
-        System.out.println(Mouse.getX() + " " + Mouse.getY());
 
         if (Mouse.getButton() == 1) {
             Vector2D force = Vector2D.fromAngle(ball.position.getAngleBetween(Mouse.getY(), Mouse.getX()));

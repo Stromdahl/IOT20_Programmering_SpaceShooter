@@ -1,4 +1,6 @@
-package com.company;
+package com.company.gameObjects;
+
+import com.company.Vector2D;
 
 import java.awt.*;
 
