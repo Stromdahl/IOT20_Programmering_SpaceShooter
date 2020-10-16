@@ -1,5 +1,6 @@
 package com.company.gameObjects;
 
+import com.company.GameObjectHandler;
 import com.company.GameWindow;
 import com.company.Vector2D;
 import com.company.input.Keyboard;
@@ -13,12 +14,13 @@ public class Player extends GameObject {
     private final double decelerationRate = 0.99d;
     private final double accelerationRate = 0.1d;
     private final double turnSpeed = 0.05;
+    private final double maxSpeed = 5;
 
     private double headingAngle = 0;
     private boolean accelerating = false;
 
-    public Player(double x, double y) {
-        super(x, y);
+    public Player(double x, double y, GameObjectHandler handler) {
+        super(x, y, handler);
     }
 
     public void update() {
@@ -54,7 +56,14 @@ public class Player extends GameObject {
         if (Keyboard.RIGHT) {
             this.headingAngle += turnSpeed;
         }
+        if (Keyboard.SPACE) {
+            this.shoot();
+        }
         this.addForce(force);
+    }
+
+    private void shoot() {
+        handler.add(new Projectile(this.position.x, this.position.y,this.headingAngle, handler));
     }
 
     public void accelerate(){

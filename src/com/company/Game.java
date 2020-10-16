@@ -5,7 +5,6 @@ import com.company.input.*;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.text.Format;
 
 public class Game extends Canvas implements Runnable {
     public static final double UPDATES_PER_SECOND = 60.0;
@@ -26,9 +25,9 @@ public class Game extends Canvas implements Runnable {
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
 
-        handler.add(new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d));
+        handler.add(new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d, handler));
         for (int i = 0; i < 5; i++) {
-            handler.add(new Asteroid(Math.random() * GameWindow.SCREEN_WIDTH, Math.random() * GameWindow.SCREEN_HEIGHT));
+            handler.add(new Asteroid(Math.random() * GameWindow.SCREEN_WIDTH, Math.random() * GameWindow.SCREEN_HEIGHT, handler));
         }
     }
 
@@ -46,9 +45,7 @@ public class Game extends Canvas implements Runnable {
         BufferStrategy bufferStrategy = this.getBufferStrategy();
         Graphics graphics = bufferStrategy.getDrawGraphics();
         Graphics2D graphics2D = (Graphics2D) graphics;
-        graphics2D.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
 
         drawBackground(Color.black, graphics);
 

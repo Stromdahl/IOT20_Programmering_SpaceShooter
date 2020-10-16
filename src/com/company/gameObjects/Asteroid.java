@@ -1,5 +1,6 @@
 package com.company.gameObjects;
 
+import com.company.GameObjectHandler;
 import com.company.GameWindow;
 import com.company.Vector2D;
 
@@ -9,8 +10,8 @@ public class Asteroid extends GameObject{
 
     private int size;
 
-    public Asteroid(double x, double y) {
-        super(x, y);
+    public Asteroid(double x, double y, GameObjectHandler handler) {
+        super(x, y, handler);
         size = (int)Math.round(Math.random()* 3 + 1) * 50;
         addForce(new Vector2D(Math.random() * 2 - 1, Math.random() * 2 - 1));
     }

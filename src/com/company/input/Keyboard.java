@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 
 public class Keyboard implements KeyListener {
 
-    public static boolean UP, LEFT, DOWN, RIGHT;
+    public static boolean UP, LEFT, DOWN, RIGHT, SPACE;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -27,6 +27,9 @@ public class Keyboard implements KeyListener {
             case KeyEvent.VK_D:
                 RIGHT = true;
                 break;
+            case KeyEvent.VK_SPACE:
+                SPACE = true;
+                break;
         }
     }
 
@@ -44,6 +47,9 @@ public class Keyboard implements KeyListener {
                 break;
             case KeyEvent.VK_D:
                 RIGHT = false;
+                break;
+            case KeyEvent.VK_SPACE:
+                SPACE = false;
                 break;
         }
     }
