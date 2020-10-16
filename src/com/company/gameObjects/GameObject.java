@@ -22,6 +22,8 @@ public abstract class GameObject {
 
     public abstract void display(Graphics graphics);
 
+    public abstract void detectEdge();
+
     public void addForce(Vector2D force){
         acceleration.add(force);
     }

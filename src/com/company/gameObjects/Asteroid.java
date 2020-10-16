@@ -20,7 +20,7 @@ public class Asteroid extends GameObject{
         this.velocity.add(acceleration);
         this.position.add(velocity);
         this.acceleration.mult(0);
-        bounceOnEdge();
+        detectEdge();
     }
 
     @Override
@@ -29,7 +29,7 @@ public class Asteroid extends GameObject{
         graphics.drawOval((int) this.position.x, (int)this.position.y, size,size);
     }
 
-    public void bounceOnEdge(){
+    public void detectEdge(){
         if(this.position.y + size > GameWindow.SCREEN_HEIGHT){
             this.position.y = 2 * (GameWindow.SCREEN_HEIGHT - size) - this.position.y;
             this.velocity.y = -this.velocity.y;
