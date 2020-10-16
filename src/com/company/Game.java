@@ -16,8 +16,7 @@ public class Game extends Canvas implements Runnable {
     Thread thread;
     private static boolean gameActive = false;
 
-    Ball ball = new Ball(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d);
-    Player player = new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d);
+    GameObjectHandler handler = new GameObjectHandler();
 
     public Game() {
         keyboard = new Keyboard();
@@ -26,6 +25,11 @@ public class Game extends Canvas implements Runnable {
         addKeyListener(keyboard);
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
+
+        handler.add(new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d));
+        for (int i = 0; i < 5; i++) {
+            handler.add(new Asteroid(Math.random() * GameWindow.SCREEN_WIDTH, Math.random() * GameWindow.SCREEN_HEIGHT));
+        }
     }
 
     public synchronized void start() {
@@ -35,16 +39,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void update() {
-        ball.update();
-        player.update();
-        System.out.println(Keyboard.UP + ", " + Keyboard.LEFT + ", " + Keyboard.DOWN + ", " + Keyboard.RIGHT);
-        if (Mouse.getButton() == 1) {
-            Vector2D force = Vector2D.fromAngle(ball.position.getAngleBetween(Mouse.getY(), Mouse.getX()));
-            force.setMagnitude(0.5);
-            ball.addForce(force);
-        }
+        handler.update();
     }
-
 
     private void draw() {
         BufferStrategy bufferStrategy = this.getBufferStrategy();
@@ -56,8 +52,7 @@ public class Game extends Canvas implements Runnable {
 
         drawBackground(Color.black, graphics);
 
-        ball.display(graphics);
-        player.display(graphics);
+        handler.display(graphics);
 
         graphics.dispose();
         bufferStrategy.show();
