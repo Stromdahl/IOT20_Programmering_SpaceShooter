@@ -5,6 +5,7 @@ import com.company.input.Keyboard;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.Arrays;
 
 public class Player extends GameObject {
 
@@ -62,12 +63,20 @@ public class Player extends GameObject {
         g2d.translate(this.position.x, this.position.y);
         g2d.rotate(headingAngle);
 
-        graphics.setColor(Color.GREEN);
-        double scalar = 6;
-        int[] xPoints = {(int) (1.5 * scalar),(int) (-1.5 * scalar),(int) (-0.5 * scalar),(int) (-1.5 * scalar)};
-        int[] yPoints = {0,(int) (scalar),0 ,(int) (-scalar)};
-        graphics.drawPolygon(xPoints, yPoints, xPoints.length);
+        drawShip(6, graphics);
 
         g2d.setTransform(old);
+    }
+
+    public void drawShip(double scalar, Graphics graphics){
+        Parser doublesToInts = (d) -> Arrays.stream(d).map(i -> i * scalar).mapToInt(i -> (int) Math.round(i)).toArray();
+
+        graphics.setColor(Color.GREEN);
+        double[] xPoints = {1.5, -1.5, -0.5, -1.5};
+        double[] yPoints = {0, 1, 0, -1};
+        graphics.drawPolygon(doublesToInts.map(xPoints), doublesToInts.map(yPoints), xPoints.length);
+    }
+    interface Parser{
+        int[] map(double[] doubles);
     }
 }
