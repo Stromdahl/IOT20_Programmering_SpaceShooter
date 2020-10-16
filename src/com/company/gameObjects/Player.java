@@ -1,5 +1,6 @@
 package com.company.gameObjects;
 
+import com.company.GameWindow;
 import com.company.Vector2D;
 import com.company.input.Keyboard;
 
@@ -14,20 +15,24 @@ public class Player extends GameObject {
     private final double turnSpeed = 0.05;
 
     private double headingAngle = 0;
+    private boolean accelerating = false;
 
     public Player(double x, double y) {
         super(x, y);
     }
 
     public void update() {
+        this.movement();
+
         Vector2D newVelocity = Vector2D.fromAngle(this.headingAngle);
         newVelocity.setMagnitude(this.velocity.getMagnitude());
         newVelocity.add(this.acceleration);
+
         this.velocity = newVelocity.copy();
         this.position.add(this.velocity);
         this.acceleration.mult(0);
 
-        this.movement();
+        this.detectEdge();
     }
 
     private void movement() {
@@ -35,8 +40,10 @@ public class Player extends GameObject {
         Vector2D force = new Vector2D();
         if (Keyboard.UP) {
             accelerate();
+            accelerating = true;
         } else {
             this.velocity.mult(decelerationRate);
+            accelerating = false;
         }
         if (Keyboard.LEFT) {
             this.headingAngle -= turnSpeed;
@@ -54,6 +61,15 @@ public class Player extends GameObject {
         Vector2D force = Vector2D.fromAngle(this.headingAngle);
         force.setMagnitude(this.accelerationRate);
         addForce(force);
+    }
+
+    @Override
+    public void detectEdge() {
+        if(this.position.x > GameWindow.SCREEN_WIDTH) this.position.x -= GameWindow.SCREEN_WIDTH;
+        else if(this.position.x < 0) this.position.x += GameWindow.SCREEN_WIDTH;
+
+        if(this.position.y > GameWindow.SCREEN_HEIGHT) this.position.y -= GameWindow.SCREEN_HEIGHT;
+        else if(this.position.y < 0) this.position.y += GameWindow.SCREEN_HEIGHT;
     }
 
     public void display(Graphics graphics) {
@@ -75,7 +91,15 @@ public class Player extends GameObject {
         double[] xPoints = {1.5, -1.5, -0.5, -1.5};
         double[] yPoints = {0, 1, 0, -1};
         graphics.drawPolygon(doublesToInts.map(xPoints), doublesToInts.map(yPoints), xPoints.length);
+
+        if(this.accelerating) {
+            graphics.setColor(Color.ORANGE);
+            double[] xPointsFlame = {-1.5, -2.0, -3.0, -2.0};
+            double[] yPointsFlame = {0, 0.5, 0, -0.5};
+            graphics.drawPolygon(doublesToInts.map(xPointsFlame), doublesToInts.map(yPointsFlame), xPoints.length);
+        }
     }
+
     interface Parser{
         int[] map(double[] doubles);
     }
