@@ -20,14 +20,18 @@ public class Game extends Canvas implements Runnable {
     public Game() {
         keyboard = new Keyboard();
         mouse = new Mouse();
-
         addKeyListener(keyboard);
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
-
         handler.add(new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d, handler));
-        for (int i = 0; i < 5; i++) {
-            handler.add(new Asteroid(Math.random() * GameWindow.SCREEN_WIDTH, Math.random() * GameWindow.SCREEN_HEIGHT, handler));
+        createAsteroids();
+    }
+
+    public void createAsteroids(){
+        for (int i = 0; i < 1; i++) {
+            double randomX = Math.random() * (GameWindow.SCREEN_WIDTH + 400)  + 200;
+            double randomY = Math.random() * (GameWindow.SCREEN_HEIGHT + 400) + 200;
+            handler.add(new Asteroid(randomX, randomY, handler));
         }
     }
 
@@ -39,6 +43,7 @@ public class Game extends Canvas implements Runnable {
 
     private void update() {
         handler.update();
+        System.out.println(handler.getNumberOfObjects());
     }
 
     private void draw() {
@@ -46,11 +51,8 @@ public class Game extends Canvas implements Runnable {
         Graphics graphics = bufferStrategy.getDrawGraphics();
         Graphics2D graphics2D = (Graphics2D) graphics;
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
-
         drawBackground(Color.black, graphics);
-
         handler.display(graphics);
-
         graphics.dispose();
         bufferStrategy.show();
     }

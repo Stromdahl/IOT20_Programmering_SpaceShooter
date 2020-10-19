@@ -14,20 +14,21 @@ public class Player extends GameObject {
     private final double decelerationRate = 0.99d;
     private final double accelerationRate = 0.1d;
     private final double turnSpeed = 0.05;
-    private final double maxSpeed = 5;
-
+    private final double maxSpeed = 10;
+    private final int weaponCooldownTime = 10;
+    private int cooldownTimer = 0;
     private double headingAngle = 0;
     private boolean accelerating = false;
 
     public Player(double x, double y, GameObjectHandler handler) {
-        super(x, y, handler);
+        super(x, y, ID.Player,handler);
     }
 
     public void update() {
         this.movement();
 
         Vector2D newVelocity = Vector2D.fromAngle(this.headingAngle);
-        newVelocity.setMagnitude(this.velocity.getMagnitude());
+        newVelocity.setMagnitude(Math.min(this.velocity.getMagnitude(), this.maxSpeed));
         newVelocity.add(this.acceleration);
 
         this.velocity = newVelocity.copy();
@@ -35,10 +36,13 @@ public class Player extends GameObject {
         this.acceleration.mult(0);
 
         this.detectEdge();
+
+        if(this.cooldownTimer > 0){
+            this.cooldownTimer--;
+        }
     }
 
     private void movement() {
-
         Vector2D force = new Vector2D();
         if (Keyboard.UP) {
             accelerate();
@@ -57,13 +61,16 @@ public class Player extends GameObject {
             this.headingAngle += turnSpeed;
         }
         if (Keyboard.SPACE) {
-            this.shoot();
+            this.shootProjectile();
         }
         this.addForce(force);
     }
 
-    private void shoot() {
-        handler.add(new Projectile(this.position.x, this.position.y,this.headingAngle, handler));
+    private void shootProjectile() {
+        if(cooldownTimer < 1) {
+            handler.add(new Projectile(this.position.x, this.position.y, this.headingAngle, handler));
+            cooldownTimer = weaponCooldownTime;
+        }
     }
 
     public void accelerate(){
@@ -72,7 +79,6 @@ public class Player extends GameObject {
         addForce(force);
     }
 
-    @Override
     public void detectEdge() {
         if(this.position.x > GameWindow.SCREEN_WIDTH) this.position.x -= GameWindow.SCREEN_WIDTH;
         else if(this.position.x < 0) this.position.x += GameWindow.SCREEN_WIDTH;

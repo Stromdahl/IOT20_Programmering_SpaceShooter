@@ -6,6 +6,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class GameObjectHandler {
+
     private ArrayList<GameObject> gameObjects = new ArrayList<>();
 
     public void add(GameObject gameObject){
@@ -30,5 +31,13 @@ public class GameObjectHandler {
         for (int i = gameObjects.size() - 1; i >= 0; i--) {
             gameObjects.get(i).display(graphics);
         }
+    }
+
+    public ArrayList<GameObject> getGameObjects() {
+        return gameObjects;
+    }
+
+    public int getNumberOfObjects() {
+        return gameObjects.size();
     }
 }

@@ -4,7 +4,7 @@ public class Vector2D {
     public double x;
     public double y;
 
-    public static Vector2D fromAngle(double angle){
+    public static Vector2D fromAngle(double angle) {
         return new Vector2D(Math.cos(angle), Math.sin(angle));
     }
 
@@ -53,19 +53,27 @@ public class Vector2D {
         return this.getAngleBetween(vector.y, vector.x);
     }
 
-    public void setMagnitude(double magnitude){
+    public double getDistanceBetween(double x, double y) {
+        return Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2));
+    }
+
+    public double getDistanceBetween(Vector2D vector) {
+        return  getDistanceBetween(vector.x, vector.y);
+    }
+
+    public void setMagnitude(double magnitude) {
         double angle = this.getAngle();
         this.x = magnitude * Math.cos(angle);
         this.y = magnitude * Math.sin(angle);
     }
 
-    public double getMagnitude(){
+    public double getMagnitude() {
         return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     }
 
     public void rotate(double angle) {
         double newX = x * Math.cos(angle) - y * Math.sin(angle);
-        double newY = x * Math.sin(angle)  + y * Math.cos(angle);
+        double newY = x * Math.sin(angle) + y * Math.cos(angle);
         this.x = newX;
         this.y = newY;
     }
