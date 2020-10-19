@@ -2,6 +2,7 @@ package com.company.gameObjects;
 
 import com.company.GameObjectHandler;
 import com.company.GameWindow;
+import com.company.Score;
 import com.company.Vector2D;
 
 import java.awt.*;
@@ -36,6 +37,8 @@ public class Asteroid extends GameObject {
             GameObject tempGameObject = gameObjects.get(i);
             if (tempGameObject.id == ID.Projectile) {
                 if (this.position.getDistanceBetween(tempGameObject.position) < this.size / 2d) {
+                    Score.addScore(this.size);
+                    System.out.println(Score.score);
                     if (this.size > 50) {
                         this.handler.add(new Asteroid(this.position.x, this.position.y, this.size - 50, handler));
                         this.handler.add(new Asteroid(this.position.x, this.position.y, this.size - 50, handler));

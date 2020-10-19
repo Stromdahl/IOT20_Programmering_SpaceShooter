@@ -22,7 +22,7 @@ public class GameObjectHandler {
     }
 
     public void update(){
-        for (int i = gameObjects.size() - 1; i >= 0; i--) {
+        for (int i = 0; i < gameObjects.size(); i++) {
             gameObjects.get(i).update();
         }
     }

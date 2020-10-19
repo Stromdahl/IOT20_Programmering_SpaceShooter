@@ -9,6 +9,7 @@ import java.awt.image.BufferStrategy;
 public class Game extends Canvas implements Runnable {
     public static final double UPDATES_PER_SECOND = 60.0;
     static long frameRate = 0;
+    static long updateCount = 0;
 
     Keyboard keyboard;
     Mouse mouse;
@@ -24,12 +25,12 @@ public class Game extends Canvas implements Runnable {
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
         handler.add(new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d, handler));
-        createAsteroids();
+        createAsteroids(2);
     }
 
-    public void createAsteroids(){
-        for (int i = 0; i < 1; i++) {
-            double randomX = Math.random() * (GameWindow.SCREEN_WIDTH + 400)  + 200;
+    public void createAsteroids(int numberOfAsteroids){
+        for (int i = 0; i <  numberOfAsteroids; i++) {
+            double randomX = Math.random() * (GameWindow.SCREEN_WIDTH + 400) + 200;
             double randomY = Math.random() * (GameWindow.SCREEN_HEIGHT + 400) + 200;
             handler.add(new Asteroid(randomX, randomY, handler));
         }
@@ -43,7 +44,12 @@ public class Game extends Canvas implements Runnable {
 
     private void update() {
         handler.update();
-        System.out.println(handler.getNumberOfObjects());
+
+        updateCount++;
+        if(updateCount % (UPDATES_PER_SECOND * 5) == 0){
+            createAsteroids(1);
+        }
+
     }
 
     private void draw() {
