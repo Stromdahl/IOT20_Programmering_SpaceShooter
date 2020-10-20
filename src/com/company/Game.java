@@ -24,12 +24,12 @@ public class Game extends Canvas implements Runnable {
         addMouseListener(mouse);
         addMouseMotionListener(mouse);
         handler.add(new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d, handler));
-        createAsteroids();
+        createAsteroids(3);
     }
 
-    public void createAsteroids(){
-        for (int i = 0; i < 1; i++) {
-            double randomX = Math.random() * (GameWindow.SCREEN_WIDTH + 400)  + 200;
+    public void createAsteroids(int numberOfAsteroids) {
+        for (int i = 0; i < numberOfAsteroids; i++) {
+            double randomX = Math.random() * (GameWindow.SCREEN_WIDTH + 400) + 200;
             double randomY = Math.random() * (GameWindow.SCREEN_HEIGHT + 400) + 200;
             handler.add(new Asteroid(randomX, randomY, handler));
         }
@@ -43,24 +43,31 @@ public class Game extends Canvas implements Runnable {
 
     private void update() {
         handler.update();
-        System.out.println(handler.getNumberOfObjects());
     }
 
     private void draw() {
         BufferStrategy bufferStrategy = this.getBufferStrategy();
         Graphics graphics = bufferStrategy.getDrawGraphics();
-        Graphics2D graphics2D = (Graphics2D) graphics;
-        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+        enableAntialiasing((Graphics2D) graphics);
+
         drawBackground(Color.black, graphics);
+        drawScoreOnScreen(GameWindow.SCREEN_WIDTH / 2, 32, 32, graphics);
         handler.display(graphics);
+
         graphics.dispose();
         bufferStrategy.show();
     }
 
-    private void drawText(String text, int x, int y, int size, Graphics graphics) {
-        graphics.setColor(Color.yellow);
-        graphics.setFont(new Font("Monospaced", Font.PLAIN, 20));
-        graphics.drawString("FPS: " + frameRate, 5, 15);
+    private void enableAntialiasing(Graphics2D graphics2D) {
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    }
+
+    private void drawScoreOnScreen(int x, int y, int size, Graphics graphics) {
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(new Font("Monospaced", Font.BOLD, size));
+        String text = String.format("SCORE: %S", Score.getScore());
+        int textWidth =  graphics.getFontMetrics().stringWidth(text);
+        graphics.drawString(text, x - textWidth / 2, y);
     }
 
     private void drawBackground(Color color, Graphics graphics) {
