@@ -16,7 +16,7 @@ public class GameWindow extends JFrame {
         game.setFocusable(true);
         this.add(game);
         this.setTitle("Physics");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
         this.pack();
         this.setVisible(true);

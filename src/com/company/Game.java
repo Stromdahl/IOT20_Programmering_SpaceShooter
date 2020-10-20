@@ -4,34 +4,42 @@ import com.company.gameObjects.*;
 import com.company.input.*;
 
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 
 public class Game extends Canvas implements Runnable {
-    public static final double UPDATES_PER_SECOND = 60.0;
-    static long frameRate = 0;
-
-    Keyboard keyboard;
-    Mouse mouse;
-    Thread thread;
-    private static boolean gameActive = false;
-
+    GameWindow gameWindow;
+    private final double UPDATES_PER_SECOND = 60.0;
+    public static boolean gameActive = false;
+    private int updateCounter = 0;
+    Keyboard keyboard = new Keyboard();
+    Mouse mouse = new Mouse();
     GameObjectHandler handler = new GameObjectHandler();
+    Score score = new Score();
+    Thread thread;
 
     public Game() {
-        keyboard = new Keyboard();
-        mouse = new Mouse();
-        addKeyListener(keyboard);
-        addMouseListener(mouse);
-        addMouseMotionListener(mouse);
-        handler.add(new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d, handler));
+        gameWindow = new GameWindow(this);
+        addListeners();
+        createPlayer();
         createAsteroids(3);
     }
 
-    public void createAsteroids(int numberOfAsteroids) {
+    private void addListeners() {
+        this.addKeyListener(keyboard);
+        this.addMouseListener(mouse);
+        this.addMouseMotionListener(mouse);
+    }
+
+    private void createPlayer() {
+        handler.add(new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d, handler));
+    }
+
+    private void createAsteroids(int numberOfAsteroids) {
         for (int i = 0; i < numberOfAsteroids; i++) {
-            double randomX = Math.random() * (GameWindow.SCREEN_WIDTH + 400) + 200;
-            double randomY = Math.random() * (GameWindow.SCREEN_HEIGHT + 400) + 200;
-            handler.add(new Asteroid(randomX, randomY, handler));
+            double randomX = Math.random() * (GameWindow.SCREEN_WIDTH + 400) - 200;
+            double randomY = Math.random() * (GameWindow.SCREEN_HEIGHT + 400) - 200;
+            handler.add(new Asteroid(randomX, randomY, handler, score));
         }
     }
 
@@ -41,19 +49,39 @@ public class Game extends Canvas implements Runnable {
         gameActive = true;
     }
 
+    public synchronized void stop() {
+        try {
+            thread.join();
+            gameActive = false;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void askPlayerForName(){
+
+    }
+
     private void update() {
-        handler.update();
+        if(handler.hasPlayer()){
+            handler.update();
+            updateCounter++;
+            if(updateCounter % (UPDATES_PER_SECOND * 5) == 0){
+                createAsteroids(1);
+            }
+        } else {
+            gameWindow.dispatchEvent(new WindowEvent(gameWindow, WindowEvent.WINDOW_CLOSING));
+            this.stop();
+        }
     }
 
     private void draw() {
         BufferStrategy bufferStrategy = this.getBufferStrategy();
         Graphics graphics = bufferStrategy.getDrawGraphics();
         enableAntialiasing((Graphics2D) graphics);
-
         drawBackground(Color.black, graphics);
         drawScoreOnScreen(GameWindow.SCREEN_WIDTH / 2, 32, 32, graphics);
         handler.display(graphics);
-
         graphics.dispose();
         bufferStrategy.show();
     }
@@ -65,8 +93,8 @@ public class Game extends Canvas implements Runnable {
     private void drawScoreOnScreen(int x, int y, int size, Graphics graphics) {
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font("Monospaced", Font.BOLD, size));
-        String text = String.format("SCORE: %S", Score.getScore());
-        int textWidth =  graphics.getFontMetrics().stringWidth(text);
+        String text = String.format("SCORE: %S", score.getScore());
+        int textWidth = graphics.getFontMetrics().stringWidth(text);
         graphics.drawString(text, x - textWidth / 2, y);
     }
 
@@ -91,17 +119,7 @@ public class Game extends Canvas implements Runnable {
             if (gameActive) {
                 draw();
             }
-            frameRate = 1000000000 / (System.nanoTime() - now);
         }
         stop();
-    }
-
-    public synchronized void stop() {
-        try {
-            thread.join();
-            gameActive = false;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

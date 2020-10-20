@@ -1,5 +1,6 @@
 package com.company.gameObjects;
 
+import com.company.Game;
 import com.company.GameObjectHandler;
 import com.company.GameWindow;
 import com.company.Vector2D;
@@ -7,6 +8,7 @@ import com.company.input.Keyboard;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Player extends GameObject {
@@ -19,27 +21,41 @@ public class Player extends GameObject {
     private int cooldownTimer = 0;
     private double headingAngle = 0;
     private boolean accelerating = false;
+    private boolean alive = true;
 
     public Player(double x, double y, GameObjectHandler handler) {
-        super(x, y, ID.Player,handler);
+        super(x, y, 6, ID.Player,handler);
     }
 
     public void update() {
         this.movement();
-
-        Vector2D newVelocity = Vector2D.fromAngle(this.headingAngle);
-        newVelocity.setMagnitude(Math.min(this.velocity.getMagnitude(), this.maxSpeed));
-        newVelocity.add(this.acceleration);
-
-        this.velocity = newVelocity.copy();
+        this.velocity = calculateNewVelocity();
         this.position.add(this.velocity);
         this.acceleration.mult(0);
-
         this.detectEdge();
-
+        this.checkAsteroidsCollision();
         if(this.cooldownTimer > 0){
             this.cooldownTimer--;
         }
+    }
+
+    private void checkAsteroidsCollision() {
+        ArrayList<GameObject> gameObjects = handler.getGameObjects();
+        for (int i = 0; i < gameObjects.size(); i++) {
+            GameObject tempGameObject = gameObjects.get(i);
+            if (tempGameObject.getId() == ID.Asteroid) {
+                if (this.position.getDistanceBetween(tempGameObject.position) < tempGameObject.getSize() / 2d) {
+                    this.handler.remove(this);
+                }
+            }
+        }
+    }
+
+    private Vector2D calculateNewVelocity(){
+        Vector2D newVelocity = Vector2D.fromAngle(this.headingAngle);
+        newVelocity.setMagnitude(Math.min(this.velocity.getMagnitude(), this.maxSpeed));
+        newVelocity.add(this.acceleration);
+        return newVelocity;
     }
 
     private void movement() {
@@ -94,13 +110,13 @@ public class Player extends GameObject {
         g2d.translate(this.position.x, this.position.y);
         g2d.rotate(headingAngle);
 
-        drawShip(6, graphics);
+        drawShip(this.getSize(), graphics);
 
         g2d.setTransform(old);
     }
 
-    public void drawShip(double scalar, Graphics graphics){
-        Parser doublesToInts = (d) -> Arrays.stream(d).map(i -> i * scalar).mapToInt(i -> (int) Math.round(i)).toArray();
+    public void drawShip(double size, Graphics graphics){
+        Parser doublesToInts = (d) -> Arrays.stream(d).map(i -> i * size).mapToInt(i -> (int) Math.round(i)).toArray();
 
         graphics.setColor(Color.GREEN);
         double[] xPoints = {1.5, -1.5, -0.5, -1.5};
@@ -115,6 +131,7 @@ public class Player extends GameObject {
         }
     }
 
+    @FunctionalInterface
     interface Parser{
         int[] map(double[] doubles);
     }

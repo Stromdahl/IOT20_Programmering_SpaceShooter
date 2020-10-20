@@ -10,16 +10,16 @@ import java.util.ArrayList;
 
 public class Asteroid extends GameObject {
 
-    private int size;
+    private Score score;
 
-    public Asteroid(double x, double y, int size, GameObjectHandler handler) {
-        super(x, y, ID.Asteroid, handler);
-        this.size = size;
+    public Asteroid(double x, double y, int size, GameObjectHandler handler, Score score) {
+        super(x, y, size, ID.Asteroid, handler);
+        this.score = score;
         addForce(new Vector2D(Math.random() * 2 - 1, Math.random() * 2 - 1));
     }
 
-    public Asteroid(double x, double y, GameObjectHandler handler) throws IllegalArgumentException {
-        this(x, y, 200, handler);
+    public Asteroid(double x, double y, GameObjectHandler handler, Score score) {
+        this(x, y, 200, handler, score);
     }
 
     @Override
@@ -33,13 +33,14 @@ public class Asteroid extends GameObject {
 
     public void checkProjectileCollision() {
         ArrayList<GameObject> gameObjects = handler.getGameObjects();
-        for (GameObject tempGameObject : gameObjects) {
-            if (tempGameObject.id == ID.Projectile) {
-                if (this.position.getDistanceBetween(tempGameObject.position) < this.size / 2d) {
-                    Score.addScore(this.size);
-                    if (this.size > 50) {
-                        this.handler.add(new Asteroid(this.position.x, this.position.y, this.size - 50, handler));
-                        this.handler.add(new Asteroid(this.position.x, this.position.y, this.size - 50, handler));
+        for (int i = 0; i < gameObjects.size(); i++) {
+            GameObject tempGameObject = gameObjects.get(i);
+            if (tempGameObject.getId() == ID.Projectile) {
+                if (this.position.getDistanceBetween(tempGameObject.position) < this.getSize() / 2d) {
+                    score.addScore(this.getSize());
+                    if (this.getSize() > 50) {
+                        this.handler.add(new Asteroid(this.position.x, this.position.y, this.getSize() - 50, handler, score));
+                        this.handler.add(new Asteroid(this.position.x, this.position.y, this.getSize() - 50, handler, score));
                     }
                     this.handler.remove(tempGameObject);
                     this.handler.remove(this);
@@ -51,24 +52,24 @@ public class Asteroid extends GameObject {
     @Override
     public void display(Graphics graphics) {
         graphics.setColor(Color.white);
-        graphics.drawOval((int) this.position.x - size / 2, (int) this.position.y - size / 2, size, size);
+        graphics.drawOval((int) this.position.x - this.getSize() / 2, (int) this.position.y - this.getSize() / 2, this.getSize(), this.getSize());
     }
 
     public void detectEdge() {
-        if (this.position.y > GameWindow.SCREEN_HEIGHT - size / 2d) {
-            this.position.y += 2 * (GameWindow.SCREEN_HEIGHT - this.size / 2d - this.position.y);
+        if (this.position.y > GameWindow.SCREEN_HEIGHT - this.getSize() / 2d) {
+            this.position.y += 2 * (GameWindow.SCREEN_HEIGHT - this.getSize() / 2d - this.position.y);
             this.velocity.y = -this.velocity.y;
         }
-        if (this.position.y < size / 2d) {
-            this.position.y += size - this.position.y * 2;
+        if (this.position.y < this.getSize() / 2d) {
+            this.position.y += this.getSize() - this.position.y * 2;
             this.velocity.y = -this.velocity.y;
         }
-        if (this.position.x > GameWindow.SCREEN_WIDTH - size / 2d) {
-            this.position.x += 2 * (GameWindow.SCREEN_WIDTH - this.size / 2d - this.position.x);
+        if (this.position.x > GameWindow.SCREEN_WIDTH - this.getSize() / 2d) {
+            this.position.x += 2 * (GameWindow.SCREEN_WIDTH - this.getSize() / 2d - this.position.x);
             this.velocity.x = -this.velocity.x;
         }
-        if (this.position.x < size / 2d) {
-            this.position.x += size - this.position.x * 2;
+        if (this.position.x < this.getSize() / 2d) {
+            this.position.x += this.getSize() - this.position.x * 2;
             this.velocity.x = -this.velocity.x;
         }
     }
