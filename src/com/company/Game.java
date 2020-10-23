@@ -50,6 +50,8 @@ public class Game extends Canvas implements Runnable {
     }
 
     public synchronized void stop() {
+        gameWindow.dispatchEvent(new WindowEvent(gameWindow, WindowEvent.WINDOW_CLOSING));
+        new HighScoreWindow();
         try {
             thread.join();
             gameActive = false;
@@ -70,7 +72,6 @@ public class Game extends Canvas implements Runnable {
                 createAsteroids(1);
             }
         } else {
-            gameWindow.dispatchEvent(new WindowEvent(gameWindow, WindowEvent.WINDOW_CLOSING));
             this.stop();
         }
     }
