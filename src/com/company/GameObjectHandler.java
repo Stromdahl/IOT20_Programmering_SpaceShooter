@@ -1,6 +1,7 @@
 package com.company;
 
 import com.company.gameObjects.GameObject;
+import com.company.gameObjects.ID;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -37,7 +38,7 @@ public class GameObjectHandler {
         return gameObjects;
     }
 
-    public int getNumberOfObjects() {
-        return gameObjects.size();
+    public boolean hasPlayer() {
+        return gameObjects.stream().anyMatch(gameObject -> gameObject.getId() == ID.Player);
     }
 }
