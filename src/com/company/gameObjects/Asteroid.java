@@ -18,10 +18,6 @@ public class Asteroid extends GameObject {
         addForce(new Vector2D(Math.random() * 2 - 1, Math.random() * 2 - 1));
     }
 
-    public Asteroid(double x, double y, GameObjectHandler handler, Score score) {
-        this(x, y, 200, handler, score);
-    }
-
     @Override
     public void update() {
         this.velocity.add(acceleration);

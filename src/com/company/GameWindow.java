@@ -15,7 +15,6 @@ public class GameWindow extends JFrame {
         game.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
         game.setFocusable(true);
         this.add(game);
-        this.setTitle("Physics");
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setResizable(false);
         this.pack();

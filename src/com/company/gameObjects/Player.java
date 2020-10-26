@@ -27,6 +27,10 @@ public class Player extends GameObject {
         super(x, y, 6, ID.Player,handler);
     }
 
+    public Player(Vector2D position, GameObjectHandler handler){
+        this(position.x, position.y, handler);
+    }
+
     public void update() {
         this.movement();
         this.velocity = calculateNewVelocity();

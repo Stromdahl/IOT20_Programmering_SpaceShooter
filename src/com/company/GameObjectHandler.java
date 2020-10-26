@@ -2,6 +2,7 @@ package com.company;
 
 import com.company.gameObjects.GameObject;
 import com.company.gameObjects.ID;
+import com.company.gameObjects.Player;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -36,6 +37,13 @@ public class GameObjectHandler {
 
     public ArrayList<GameObject> getGameObjects() {
         return gameObjects;
+    }
+
+    public Player getPlayer(){
+        for (GameObject gameObject : gameObjects) {
+            if(gameObject.getId() == ID.Player) return (Player)gameObject;
+        }
+        return null;
     }
 
     public boolean hasPlayer() {

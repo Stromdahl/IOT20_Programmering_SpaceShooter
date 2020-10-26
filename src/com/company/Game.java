@@ -3,6 +3,7 @@ package com.company;
 import com.company.gameObjects.*;
 import com.company.input.*;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -10,8 +11,11 @@ import java.awt.image.BufferStrategy;
 public class Game extends Canvas implements Runnable {
     GameWindow gameWindow;
     private final double UPDATES_PER_SECOND = 60.0;
-    public static boolean gameActive = false;
+    private final String playerName = "";
+    public boolean gameActive = false;
     private int updateCounter = 0;
+    private int frameRate;
+    private int updateRate;
     Keyboard keyboard = new Keyboard();
     Mouse mouse = new Mouse();
     GameObjectHandler handler = new GameObjectHandler();
@@ -19,10 +23,20 @@ public class Game extends Canvas implements Runnable {
     Thread thread;
 
     public Game() {
+        //this.playerName = this.getNameFromPlayer();
         gameWindow = new GameWindow(this);
         addListeners();
-        createPlayer();
+        createPlayer(new Vector2D(GameWindow.SCREEN_WIDTH / 2d,GameWindow.SCREEN_HEIGHT / 2d));
         createAsteroids(3);
+    }
+
+    private String getNameFromPlayer(){
+        String name = "";
+        JFrame frame = new JFrame("SpaceShooter");
+        while (name == null || name.equals("")) {
+            name = JOptionPane.showInputDialog(frame, "Please write your name\nPress \"OK\" to start the game");
+        }
+        return name;
     }
 
     private void addListeners() {
@@ -31,15 +45,21 @@ public class Game extends Canvas implements Runnable {
         this.addMouseMotionListener(mouse);
     }
 
-    private void createPlayer() {
-        handler.add(new Player(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d, handler));
+    private void createPlayer(Vector2D playerPosition) {
+        handler.add(new Player(playerPosition,this.handler));
     }
 
     private void createAsteroids(int numberOfAsteroids) {
+        Vector2D playerPosition = handler.getPlayer().position;
+        int size = 200;
         for (int i = 0; i < numberOfAsteroids; i++) {
-            double randomX = Math.random() * (GameWindow.SCREEN_WIDTH + 400) - 200;
-            double randomY = Math.random() * (GameWindow.SCREEN_HEIGHT + 400) - 200;
-            handler.add(new Asteroid(randomX, randomY, handler, score));
+            double randomX;
+            double randomY;
+            do{
+                randomX = Math.random() * (GameWindow.SCREEN_WIDTH - size*2) + size;
+                randomY = Math.random() * (GameWindow.SCREEN_HEIGHT - size*2) + size;
+            } while(playerPosition.getDistanceBetween(randomX, randomY) < size/2d);
+            handler.add(new Asteroid(randomX, randomY, size, handler, score));
         }
     }
 
@@ -51,7 +71,6 @@ public class Game extends Canvas implements Runnable {
 
     public synchronized void stop() {
         gameWindow.dispatchEvent(new WindowEvent(gameWindow, WindowEvent.WINDOW_CLOSING));
-        new HighScoreWindow();
         try {
             thread.join();
             gameActive = false;
@@ -60,11 +79,8 @@ public class Game extends Canvas implements Runnable {
         }
     }
 
-    public static void askPlayerForName(){
-
-    }
-
     private void update() {
+        gameWindow.setTitle(String.format("SpaceShooter| Player: %s | frames per second: %d", this.playerName, frameRate));
         if(handler.hasPlayer()){
             handler.update();
             updateCounter++;
@@ -74,6 +90,11 @@ public class Game extends Canvas implements Runnable {
         } else {
             this.stop();
         }
+    }
+
+    private void showGameOverWindow(){
+        HighScore highScore = new HighScore();
+        highScore.addScore(this.score);
     }
 
     private void draw() {
@@ -120,6 +141,7 @@ public class Game extends Canvas implements Runnable {
             if (gameActive) {
                 draw();
             }
+            frameRate = (int) (1000000000 / (System.nanoTime() - now));
         }
         stop();
     }
