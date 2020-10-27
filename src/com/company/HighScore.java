@@ -1,6 +1,5 @@
 package com.company;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -8,27 +7,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class HighScore extends JFrame{
+public class HighScore {
     private final String filePath;
     private final ArrayList<Score> scores;
 
-    public HighScore(String filePath){
+    public HighScore(String filePath) {
         this.filePath = filePath;
         this.scores = getScoresFromFile();
     }
 
-    public HighScore(){
+    public HighScore() {
         this("res/high_score.txt");
     }
 
     /**
      * Reads the scores stored in the file
+     *
      * @return a arrayList with scores
      */
-    public ArrayList<Score> getScoresFromFile(){
+    public ArrayList<Score> getScoresFromFile() {
         ArrayList<Score> scores = new ArrayList<>();
         try (Scanner scanner = new Scanner(new File(filePath))) {
-            while(scanner.hasNextLine()){
+            while (scanner.hasNextLine()) {
                 try {
                     String[] fileLine = scanner.nextLine().split(",");
                     String name = fileLine[0];
@@ -47,7 +47,7 @@ public class HighScore extends JFrame{
     /**
      * Creates a file to the path if the file doesn't exists
      */
-    public void createFile(){
+    public void createFile() {
         try {
             //noinspection ResultOfMethodCallIgnored
             new File(this.filePath).createNewFile();
@@ -58,12 +58,13 @@ public class HighScore extends JFrame{
 
     /**
      * Adds the score to the correct index in the ArrayList so the ArrayList still is sorted
+     *
      * @param score The score that will be added
      */
     public void addScore(Score score) {
         for (int i = 0, scoresSize = scores.size(); i < scoresSize; i++) {
             Score tempScore = scores.get(i);
-            if(tempScore.getScore() < score.getScore()) continue;
+            if (tempScore.getScore() < score.getScore()) continue;
             scores.add(i, score);
             return;
         }
@@ -73,8 +74,8 @@ public class HighScore extends JFrame{
     /**
      * writes a string to the high score file
      */
-    public void writeFile(){
-        try (FileWriter fileWriter = new FileWriter(this.filePath)){
+    public void writeFile() {
+        try (FileWriter fileWriter = new FileWriter(this.filePath)) {
             fileWriter.write(String.valueOf(this.toString()));
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,6 +84,7 @@ public class HighScore extends JFrame{
 
     /**
      * Returns string with all the scores. The scores are seperated with a new line
+     *
      * @return a string width all the scores
      */
     @Override
@@ -98,20 +100,25 @@ public class HighScore extends JFrame{
     /**
      * Removes every score from the scores arrayList
      */
-    public void clear(){
+    public void clear() {
         this.scores.clear();
     }
 
     /**
      * Returns the number of scores in the ArrayList
+     *
      * @return the number of scores in the ArrayList
      */
-    public int getNumberOfScores(){
+    public int getNumberOfScores() {
         return scores.size();
     }
 
+    /**
+     * Returns the ArrayList with the scores
+     *
+     * @return ArrayList with scores
+     */
     public ArrayList<Score> getScores() {
         return scores;
     }
-
 }
