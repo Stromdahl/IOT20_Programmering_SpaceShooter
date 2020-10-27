@@ -142,7 +142,7 @@ public class Game extends Canvas implements Runnable {
 
     private void printHighScoresToConsole() {
         HighScore highScore = new HighScore();
-        System.out.println("HighScores:");
+        System.out.println("High scores:");
         ArrayList<Score> scores = highScore.getScores();
         for (int i = scores.size() - 1; i >= 0; i--) {
             Score score = scores.get(i);
