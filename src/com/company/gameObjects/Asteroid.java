@@ -33,7 +33,7 @@ public class Asteroid extends GameObject {
             GameObject tempGameObject = gameObjects.get(i);
             if (tempGameObject.getId() == ID.Projectile) {
                 if (this.position.getDistanceBetween(tempGameObject.position) < this.getSize() / 2d) {
-                    score.addScore(this.getSize());
+                    score.addScore(this.getSize() / 10);
                     if (this.getSize() > 50) {
                         this.handler.add(new Asteroid(this.position.x, this.position.y, this.getSize() - 50, handler, score));
                         this.handler.add(new Asteroid(this.position.x, this.position.y, this.getSize() - 50, handler, score));

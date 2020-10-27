@@ -12,7 +12,7 @@ public class HighScore extends JFrame{
     private final String filePath ="res/high_score.txt";
     private ArrayList<Score> scores;
 
-    HighScore(){
+    public HighScore(){
         this.scores = getScoresFromFile();
     }
 
@@ -20,7 +20,7 @@ public class HighScore extends JFrame{
      * Reads the scores stored in the file
      * @return a arrayList with scores
      */
-    ArrayList<Score> getScoresFromFile(){
+    public ArrayList<Score> getScoresFromFile(){
         ArrayList<Score> scores = new ArrayList<>();
         try (Scanner scanner = new Scanner(new File(filePath))) {
             while(scanner.hasNextLine()){
@@ -37,7 +37,7 @@ public class HighScore extends JFrame{
     /**
      * Creates a file to the path if the file doesn't exists
      */
-    void createFile(){
+    public void createFile(){
         try {
             //noinspection ResultOfMethodCallIgnored
             new File(this.filePath).createNewFile();
@@ -50,7 +50,7 @@ public class HighScore extends JFrame{
      * Adds the score to the correct index in the ArrayList so the ArrayList still is sorted
      * @param score The score that will be added
      */
-    void addScore(Score score) {
+    public void addScore(Score score) {
         for (int i = 0, scoresSize = scores.size(); i < scoresSize; i++) {
             Score tempScore = scores.get(i);
             if(tempScore.getScore() < score.getScore()) continue;

@@ -11,11 +11,10 @@ import java.awt.image.BufferStrategy;
 public class Game extends Canvas implements Runnable {
     GameWindow gameWindow;
     private final double UPDATES_PER_SECOND = 60.0;
-    private final String playerName = "";
+    private String playerName;
     public boolean gameActive = false;
     private int updateCounter = 0;
     private int frameRate;
-    private int updateRate;
     Keyboard keyboard = new Keyboard();
     Mouse mouse = new Mouse();
     GameObjectHandler handler = new GameObjectHandler();
@@ -23,7 +22,7 @@ public class Game extends Canvas implements Runnable {
     Thread thread;
 
     public Game() {
-        //this.playerName = this.getNameFromPlayer();
+        this.playerName = this.getNameFromPlayer();
         gameWindow = new GameWindow(this);
         addListeners();
         createPlayer(new Vector2D(GameWindow.SCREEN_WIDTH / 2d,GameWindow.SCREEN_HEIGHT / 2d));
@@ -58,7 +57,7 @@ public class Game extends Canvas implements Runnable {
             do{
                 randomX = Math.random() * (GameWindow.SCREEN_WIDTH - size*2) + size;
                 randomY = Math.random() * (GameWindow.SCREEN_HEIGHT - size*2) + size;
-            } while(playerPosition.getDistanceBetween(randomX, randomY) < size/2d);
+            } while(playerPosition.getDistanceBetween(randomX, randomY) < size/2d + 25d);
             handler.add(new Asteroid(randomX, randomY, size, handler, score));
         }
     }

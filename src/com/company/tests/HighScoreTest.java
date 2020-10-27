@@ -1,5 +1,7 @@
-package com.company;
+package com.company.tests;
 
+import com.company.HighScore;
+import com.company.Score;
 import org.junit.jupiter.api.Assertions;import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

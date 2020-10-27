@@ -4,7 +4,7 @@ package com.company;
         private final String name;
         private int score;
 
-        Score(String name, int score){
+        public Score(String name, int score){
             this.name = name;
             this.score = score;
         }
