@@ -1,4 +1,4 @@
-package com.company.tests;
+package com.company;
 
 import com.company.HighScore;
 import com.company.Score;
