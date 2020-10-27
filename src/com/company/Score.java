@@ -8,10 +8,10 @@ package com.company;
             this.name = name;
             this.score = score;
         }
-        Score(){
-            this("", 0);
-        }
 
+        public Score(String name){
+            this(name, 0);
+        }
 
         public int getScore() {
             return score;
@@ -22,7 +22,7 @@ package com.company;
         }
 
         public String toString() {
-            return name + " " + score;
+            return name + "," + score;
         }
 
         public void addScore(int score) {

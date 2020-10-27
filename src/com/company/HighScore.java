@@ -9,11 +9,16 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class HighScore extends JFrame{
-    private final String filePath ="res/high_score.txt";
-    private ArrayList<Score> scores;
+    private final String filePath;
+    private final ArrayList<Score> scores;
+
+    public HighScore(String filePath){
+        this.filePath = filePath;
+        this.scores = getScoresFromFile();
+    }
 
     public HighScore(){
-        this.scores = getScoresFromFile();
+        this("res/high_score.txt");
     }
 
     /**
@@ -24,12 +29,17 @@ public class HighScore extends JFrame{
         ArrayList<Score> scores = new ArrayList<>();
         try (Scanner scanner = new Scanner(new File(filePath))) {
             while(scanner.hasNextLine()){
-                String name = scanner.next();
-                int score = scanner.nextInt();
-                scores.add(new Score(name, score));
+                try {
+                    String[] fileLine = scanner.nextLine().split(",");
+                    String name = fileLine[0];
+                    int score = Integer.parseInt(fileLine[1]);
+                    scores.add(new Score(name, score));
+                } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+                    System.err.println("Score not formatted properly");
+                }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            System.err.println("File not found");
         }
         return scores;
     }
@@ -42,7 +52,7 @@ public class HighScore extends JFrame{
             //noinspection ResultOfMethodCallIgnored
             new File(this.filePath).createNewFile();
         } catch (IOException e) {
-            System.out.println("IO exception");
+            System.err.println("IO exception");
         }
     }
 
@@ -62,11 +72,9 @@ public class HighScore extends JFrame{
 
     /**
      * writes a string to the high score file
-     * @param content the text to be written to the file
      */
-    void writeFile(String content){
-        try {
-            FileWriter fileWriter = new FileWriter(this.filePath);
+    public void writeFile(){
+        try (FileWriter fileWriter = new FileWriter(this.filePath)){
             fileWriter.write(String.valueOf(this.toString()));
         } catch (IOException e) {
             e.printStackTrace();
@@ -100,6 +108,10 @@ public class HighScore extends JFrame{
      */
     public int getNumberOfScores(){
         return scores.size();
+    }
+
+    public ArrayList<Score> getScores() {
+        return scores;
     }
 
 }

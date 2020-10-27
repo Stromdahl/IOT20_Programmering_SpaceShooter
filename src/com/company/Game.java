@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.util.ArrayList;
 
 public class Game extends Canvas implements Runnable {
     GameWindow gameWindow;
@@ -18,22 +19,26 @@ public class Game extends Canvas implements Runnable {
     Keyboard keyboard = new Keyboard();
     Mouse mouse = new Mouse();
     GameObjectHandler handler = new GameObjectHandler();
-    Score score = new Score();
+    Score score;
     Thread thread;
 
     public Game() {
         this.playerName = this.getNameFromPlayer();
         gameWindow = new GameWindow(this);
+        score = new Score(this.playerName);
         addListeners();
-        createPlayer(new Vector2D(GameWindow.SCREEN_WIDTH / 2d,GameWindow.SCREEN_HEIGHT / 2d));
+        createPlayer(new Vector2D(GameWindow.SCREEN_WIDTH / 2d, GameWindow.SCREEN_HEIGHT / 2d));
         createAsteroids(3);
     }
 
-    private String getNameFromPlayer(){
+    private String getNameFromPlayer() {
         String name = "";
         JFrame frame = new JFrame("SpaceShooter");
         while (name == null || name.equals("")) {
-            name = JOptionPane.showInputDialog(frame, "Please write your name\nPress \"OK\" to start the game");
+            name = JOptionPane.showInputDialog(frame,
+                    "You control the spaceship with the \"WASD\" keys and shoot with the spacebar\n" +
+                            "Please write your name\n" +
+                            "Press \"OK\" to start the game");
         }
         return name;
     }
@@ -45,7 +50,7 @@ public class Game extends Canvas implements Runnable {
     }
 
     private void createPlayer(Vector2D playerPosition) {
-        handler.add(new Player(playerPosition,this.handler));
+        handler.add(new Player(playerPosition, this.handler));
     }
 
     private void createAsteroids(int numberOfAsteroids) {
@@ -54,10 +59,10 @@ public class Game extends Canvas implements Runnable {
         for (int i = 0; i < numberOfAsteroids; i++) {
             double randomX;
             double randomY;
-            do{
-                randomX = Math.random() * (GameWindow.SCREEN_WIDTH - size*2) + size;
-                randomY = Math.random() * (GameWindow.SCREEN_HEIGHT - size*2) + size;
-            } while(playerPosition.getDistanceBetween(randomX, randomY) < size/2d + 25d);
+            do {
+                randomX = Math.random() * (GameWindow.SCREEN_WIDTH - size * 2) + size;
+                randomY = Math.random() * (GameWindow.SCREEN_HEIGHT - size * 2) + size;
+            } while (playerPosition.getDistanceBetween(randomX, randomY) < size / 2d + 25d);
             handler.add(new Asteroid(randomX, randomY, size, handler, score));
         }
     }
@@ -80,31 +85,36 @@ public class Game extends Canvas implements Runnable {
 
     private void update() {
         gameWindow.setTitle(String.format("SpaceShooter| Player: %s | frames per second: %d", this.playerName, frameRate));
-        if(handler.hasPlayer()){
+        if (handler.hasPlayer()) {
             handler.update();
             updateCounter++;
-            if(updateCounter % (UPDATES_PER_SECOND * 5) == 0){
-                createAsteroids(1);
+            if (updateCounter % (UPDATES_PER_SECOND * 5) == 0) {
+                createAsteroids(2);
             }
         } else {
-            this.stop();
+            this.gameActive = false;
         }
     }
 
-    private void showGameOverWindow(){
+    private void showGameOverWindow() {
         HighScore highScore = new HighScore();
         highScore.addScore(this.score);
     }
 
     private void draw() {
         BufferStrategy bufferStrategy = this.getBufferStrategy();
-        Graphics graphics = bufferStrategy.getDrawGraphics();
-        enableAntialiasing((Graphics2D) graphics);
-        drawBackground(Color.black, graphics);
-        drawScoreOnScreen(GameWindow.SCREEN_WIDTH / 2, 32, 32, graphics);
-        handler.display(graphics);
-        graphics.dispose();
-        bufferStrategy.show();
+        Graphics graphics;
+        try {
+            graphics = bufferStrategy.getDrawGraphics();
+            enableAntialiasing((Graphics2D) graphics);
+            drawBackground(Color.black, graphics);
+            drawScoreOnScreen(GameWindow.SCREEN_WIDTH / 2, 32, 32, graphics);
+            handler.display(graphics);
+            graphics.dispose();
+            bufferStrategy.show();
+        } catch (IllegalStateException e) {
+            this.gameActive = false;
+        }
     }
 
     private void enableAntialiasing(Graphics2D graphics2D) {
@@ -122,6 +132,27 @@ public class Game extends Canvas implements Runnable {
     private void drawBackground(Color color, Graphics graphics) {
         graphics.setColor(color);
         graphics.fillRect(0, 0, getWidth(), getHeight());
+    }
+
+    private void addScoreToHighScoreFile() {
+        HighScore highScore = new HighScore();
+        highScore.addScore(this.score);
+        highScore.writeFile();
+    }
+
+    private void printHighScoresToConsole() {
+        HighScore highScore = new HighScore();
+        System.out.println("HighScores:");
+        ArrayList<Score> scores = highScore.getScores();
+        for (int i = scores.size() - 1; i >= 0; i--) {
+            Score score = scores.get(i);
+            System.out.printf("%d.%s\t%d\n",scores.size() - i, score.getName(), score.getScore());
+        }
+    }
+
+    private void showGameOverDialog(){
+        JFrame frame = new JFrame("SpaceShooter");
+        JOptionPane.showMessageDialog(frame, String.format("GAME OVER\nYour score was: %d", this.score.getScore()));
     }
 
     public void run() {
@@ -142,6 +173,9 @@ public class Game extends Canvas implements Runnable {
             }
             frameRate = (int) (1000000000 / (System.nanoTime() - now));
         }
-        stop();
+        this.addScoreToHighScoreFile();
+        this.printHighScoresToConsole();
+        showGameOverDialog();
+        this.stop();
     }
 }
